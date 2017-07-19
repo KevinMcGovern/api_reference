@@ -67,8 +67,14 @@ html, body {
   bottom: 0;
   width: $nav-width;
   background-color: $nav-bg;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 500;
+
+  -webkit-box-shadow: 1px 0 2px #eee;
+    -moz-box-shadow: 1px 0 2px #eee;
+    -o-box-shadow: 1px 0 2px #eee;
+    -ms-box-shadow: 1px 0 2px #eee;
+    box-shadow: 1px 0 2px #eee;
 
   // language selector for mobile devices
   .lang-selector {
@@ -82,7 +88,11 @@ html, body {
   // This is the logo at the top of the ToC
   &>img {
     display: block;
-    max-width: 100%;
+    /*max-width: 50%;*/
+    margin-left: 30px;
+    margin-top: 20px;
+    width: 31px;
+    height: 28px;
   }
 
   &>.search {
@@ -161,7 +171,7 @@ html, body {
     list-style: none;
     margin: 0;
     padding: 0;
-    line-height: 28px;
+    line-height: 40px;
   }
 
   li {
@@ -173,7 +183,7 @@ html, body {
 
   // This is the currently selected ToC entry
   .tocify-focus {
-    box-shadow: 0px 1px 0px $nav-active-shadow;
+    //box-shadow: 0px 1px 0px $nav-active-shadow;
     background-color: $nav-active-bg;
     color: $nav-active-text;
   }
@@ -186,11 +196,11 @@ html, body {
     font-weight: 500;
     .tocify-item>a {
       padding-left: $nav-padding + $nav-indent;
-      font-size: 12px;
+      font-size: 15px;
     }
 
     // for embossed look:
-    @include embossed-bg;
+    //@include embossed-bg;
     &>li:last-child {
       box-shadow: none; // otherwise it'll overflow out of the subheader
     }
@@ -281,7 +291,7 @@ html, body {
   }
 
   .lang-selector {
-    position: fixed;
+    position: relative;
     z-index: 50;
     border-bottom: 5px solid $lang-select-active-bg;
   }
@@ -290,14 +300,15 @@ html, body {
 .lang-selector {
   background-color: $lang-select-bg;
   width: 100%;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
   a {
     display: block;
     float:left;
     color: $lang-select-text;
     text-decoration: none;
-    padding: 0 10px;
-    line-height: 30px;
+    padding: 0 40px;
+    line-height: 70px;
     outline: 0;
 
     &:active, &:focus {
@@ -356,13 +367,14 @@ html, body {
   h1 {
     @extend %header-font;
     font-size: 30px;
+    font-weight: 500;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
-    border-bottom: 1px solid #ccc;
+    /*border-bottom: 1px solid #ccc;*/
     margin-bottom: $h1-margin-bottom;
     margin-top: 2em;
-    border-top: 1px solid #ddd;
-    background-image: linear-gradient(to bottom, #fff, #f9f9f9);
+    /*border-top: 1px solid #ddd;*/
+    /*background-image: linear-gradient(to bottom, #fff, #f9f9f9);*/
   }
 
   h1:first-child, div:first-child + h1 {
@@ -373,12 +385,13 @@ html, body {
   h2 {
     @extend %header-font;
     font-size: 20px;
+    font-weight: 500;
     margin-top: 4em;
     margin-bottom: 0;
-    border-top: 1px solid #ccc;
+    /*border-top: 1px solid #ccc;*/
     padding-top: 1.2em;
     padding-bottom: 1.2em;
-    background-image: linear-gradient(to bottom, rgba(#fff, 0.4), rgba(#fff, 0));
+    /*background-image: linear-gradient(to bottom, rgba(#fff, 0.4), rgba(#fff, 0));*/
   }
 
   // h2s right after h1s should bump right up
@@ -425,7 +438,7 @@ html, body {
     }
 
     tr:last-child {
-      border-bottom: 1px solid #ccc;
+      /*border-bottom: 1px solid #ccc;*/
     }
 
     tr:nth-child(odd)>td {
@@ -448,6 +461,15 @@ html, body {
   p, li, dt, dd {
     line-height: 1.6;
     margin-top: 0;
+  }
+
+  p > a {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 2px solid #f4f4f4;
+    color: #4b525b;
+    line-height: normal;
   }
 
   img {
@@ -548,9 +570,15 @@ html, body {
 
   pre {
     @extend %code-font;
+    background-color: $code-annotation-bg;
+      border-radius: 5px;
+      padding: $code-annotation-padding;
+      color: #ccc;
+      border-top: 1px solid #000;
+      /*border-bottom: 1px solid #404040;*/
   }
 
-  blockquote {
+  /*blockquote {
     &>p {
       background-color: $code-annotation-bg;
       border-radius: 5px;
@@ -559,7 +587,7 @@ html, body {
       border-top: 1px solid #000;
       border-bottom: 1px solid #404040;
     }
-  }
+  }*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////

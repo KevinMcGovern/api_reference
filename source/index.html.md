@@ -2,188 +2,160 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
-  - javascript
+  - shell: Shell
+  - javascript: Node
+  - python: Python
+  - ruby: Ruby
 
-toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
-
-search: true
+search: false
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to Authentimate's API! You can use this API to access all of our API endpoints, such as <a href="#recover-api">Recover API</a> to reset passwords for your users.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+The API is organized around <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>. All requests should be made over SSL. All request and response bodies, including errors, are encoded in JSON.
 
 # Authentication
 
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
 ```shell
-# With shell, you can just pass the correct header with each request
+#Authentication using HTTP basic auth.
+
 curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
+    -u YOUR_SECRET_KEY:
 ```
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+#Alternatively pass a Bearer token in an Authorization header.
+
+curl "api_endpoint_here"
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
-```javascript
-const kittn = require('kittn');
+Authentication is done via your account’s API key which is found in the <a href="https://app.authentimate.com/keys">dashboard</a>.
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
+Requests are authenticated using <a href="https://en.wikipedia.org/wiki/Basic_access_authentication">HTTP Basic Auth</a>. Provide your API key as the basic auth username. You do not need to provide a password.
 
-> The above command returns JSON structured like this:
+Alternatively you can also pass your API key as a bearer token in an `Authorization` header.
+
+# Errors
+
+The Authentimate API uses the following error codes:
+
+Code | Title | Description
+---- | ----- | -------
+200 | OK | The request was successful.
+201 | Created | The resource was successfully created.
+202 | Async created | The resource was asynchronously created
+400 | Bad request | Bad request
+422 | Validation error | A validation error occurred.
+401 | Unauthorized | Your API key is invalid.
+404 | Not found | The resource does not exist.
+50X | Internal Server Error | An error occurred with our API.
+
+# Webhooks
+
+> Your webhook URL may look something like this:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+"https://myserver.com/api/webhooks/authentimate"
 ```
 
-This endpoint retrieves all kittens.
+For some APIs, such as <a href="#recover-api">Recover API</a>, the result of the user's action is asynchronous (since they can choose to perform the action whenever they feel like it). For these requests, we will call the webhook URL you provide to us when we receive input from the user.
 
-### HTTP Request
+You can set a webhook URL in your <a href="https://app.authentimate.com/project">project settings</a> to be used with all requests.
 
-`GET http://example.com/api/kittens`
+If you return anything other than a `HTTP 200` status to the webhook POST then we will report an error to the user and they will need to submit the form again.
 
-### Query Parameters
+# Recover API
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+The Recover API lets you send a password reset form to a user's email address.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Create Reset Request
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
+curl "https://recover.authentimate.com/v1/resets"
+    -u YOUR_SECRET_KEY:
+    -d '{"email":"test@example.com"}'
 ```
 
 ```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+npm install request
 ```
 
-> The above command returns JSON structured like this:
+```javascript
+var request = require('request');
+
+request.post(
+    'https://recover.authentimate.com/v1/resets',
+    { 
+        form: { email: 'test@example.com' },
+        auth: { user: 'YOUR_SECRET_KEY' },
+        json: true 
+    },
+    function (error, response, body) {
+        if (!error && response.statusCode == 201) {
+            // Save body.id to the user's profile in your database
+            // Optionally save body.expires to the user profile as well
+        }
+    }
+);
+```
+
+```python
+pip install requests
+```
+
+```python
+import requests
+r = requests.post('https://recover.authentimate.com/v1/resets', data={ 'email':'test@example.com' }, auth=('YOUR_SECRET_KEY', ''))
+r.json()
+```
+
+```ruby
+require 'net/http'
+require 'uri'
+
+url = URI.parse('https://recover.authentimate.com/v1/resets')
+req = Net::HTTP::Post.new(url.path)
+req.basic_auth 'YOUR_SECRET_KEY', ''
+req.use_ssl = true
+req.form_data({'email' => 'test@example.com'})
+
+resp = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+puts resp
+```
+
+
+> The API response object looks like the following. 
+> You should store the `id` property with the user in your database. The result webhook will contain the same `id` so that you can look up the user and update their password. 
+> The `expires` property is the Unix timestamp of the expiry date. We handle the actual rejecting of expired password resets, the expiry date is provided for your convenience in clearing out expired tokens from your database.
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+    "id": "7b19ddcc6402fd0cd28ade60246ca60c",
+    "expires": 1487207640
 }
 ```
 
-This endpoint retrieves a specific kitten.
+> In order to receive the user's updated password, you'll need to provide us with an endpoint on your server where we can send the password. The webhook request body looks like the following. As you can see, the `id` property in the webhook matches the `id` property you receive in the API response object. You can use this identifier to look up the user and update their password.
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+```json
+{
+    "id": "7b19ddcc6402fd0cd28ade60246ca60c",
+    "password": "h8A3fJ9d9L"
+}
+```
+
+To reset a user's password, you create a Reset object. This will send an email to the user with a link they can follow to enter a new password. After they've done this, we'll send the new password to the webhook URL that you set in your <a href="https://app.authentimate.com/project">project settings</a>.
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST https://recover.authentimate.com/v1/resets`
 
-### URL Parameters
+### Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+Parameter | Type | Description
+--------- | ------- | -----------
+email | <strong>string (required)<strong> | The email address that a password reset link will be sent to
 
