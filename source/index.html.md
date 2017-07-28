@@ -150,7 +150,7 @@ request.get(
         json: true 
     },
     function (error, response, body) {
-        if (!error && response.statusCode == 201) {
+        if (!error && response.statusCode == 200) {
             // Check body.verified for the status
             // body.verified will be true if the code was correct, and false if the code was incorrect.
         }
