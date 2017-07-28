@@ -256,7 +256,7 @@ The <code class="prettyprint">expires</code> property is the Unix timestamp of t
         <span class="na">json</span><span class="p">:</span> <span class="kc">true</span> 
     <span class="p">},</span>
     <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">==</span> <span class="mi">201</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">==</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Check body.verified for the status</span>
             <span class="c1">// body.verified will be true if the code was correct, and false if the code was incorrect.</span>
         <span class="p">}</span>
