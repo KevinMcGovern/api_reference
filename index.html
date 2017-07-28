@@ -91,7 +91,7 @@
       <script src="javascripts/all_nosearch.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;shell&quot;,&quot;javascript&quot;,&quot;python&quot;,&quot;ruby&quot;]">
+  <body class="index" data-languages="[&quot;shell&quot;,&quot;javascript&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -103,8 +103,6 @@
         <div class="lang-selector">
               <a href="#" data-language-name="shell">Shell</a>
               <a href="#" data-language-name="javascript">Node</a>
-              <a href="#" data-language-name="python">Python</a>
-              <a href="#" data-language-name="ruby">Ruby</a>
         </div>
       <div id="toc">
       </div>
@@ -114,7 +112,7 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>Welcome to Authentimate&rsquo;s API! You can use this API to access all of our API endpoints, such as <a href="#recover-api">Recover API</a> to reset passwords for your users.</p>
+<p>Welcome to Authentimate&rsquo;s API! You can use this API to access all of our API endpoints, such as <a href="#verify-api">Verify API</a> to verify your users&rsquo; phones.</p>
 
 <p>The API is organized around <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>. All requests should be made over SSL. All request and response bodies, including errors, are encoded in JSON.</p>
 
@@ -128,7 +126,7 @@ curl <span class="s2">"api_endpoint_here"</span>
 curl <span class="s2">"api_endpoint_here"</span>
   -H <span class="s2">"Authorization: Bearer YOUR_SECRET_KEY"</span>
 </code></pre>
-<p>Authentication is done via your account’s API key which is found in the <a href="https://app.authentimate.com/keys">dashboard</a>.</p>
+<p>Authentication is done via your account’s API key which is found in the <a href="https://dashboard.authentimate.com/keys">dashboard</a>.</p>
 
 <p>Requests are authenticated using <a href="https://en.wikipedia.org/wiki/Basic_access_authentication">HTTP Basic Auth</a>. Provide your API key as the basic auth username. You do not need to provide a password.</p>
 
@@ -187,83 +185,47 @@ curl <span class="s2">"api_endpoint_here"</span>
 </tr>
 </tbody></table>
 
-<h1 id="webhooks">Webhooks</h1>
+<h1 id="verify-api">Verify API</h1>
 
-<blockquote>
-<p>Your webhook URL may look something like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="s2">"https://myserver.com/api/webhooks/authentimate"</span><span class="w">
-</span></code></pre>
-<p>For some APIs, such as <a href="#recover-api">Recover API</a>, the result of the user&rsquo;s action is asynchronous (since they can choose to perform the action whenever they feel like it). For these requests, we will call the webhook URL you provide to us when we receive input from the user.</p>
+<p>The Verify API lets you send a verification code to a user&rsquo;s phone number to verify that they own the phone number.</p>
 
-<p>You can set a webhook URL in your <a href="https://app.authentimate.com/project">project settings</a> to be used with all requests.</p>
-
-<p>If you return anything other than a <code class="prettyprint">HTTP 200</code> status to the webhook POST then we will report an error to the user and they will need to submit the form again.</p>
-
-<h1 id="recover-api">Recover API</h1>
-
-<p>The Recover API lets you send a password reset form to a user&rsquo;s email address.</p>
-
-<h2 id="create-reset-request">Create Reset Request</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://recover.authentimate.com/v1/resets"</span>
+<h2 id="create-verification-request">Create Verification Request</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.authentimate.com/v1/verifications"</span>
     -u YOUR_SECRET_KEY:
-    -d <span class="s1">'{"email":"test@example.com"}'</span>
+    -d <span class="s1">'{"phoneNumber":"16072039850"}'</span>
 </code></pre><pre class="highlight javascript"><code><span class="nx">npm</span> <span class="nx">install</span> <span class="nx">request</span>
 </code></pre><pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'request'</span><span class="p">);</span>
 
 <span class="nx">request</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span>
-    <span class="s1">'https://recover.authentimate.com/v1/resets'</span><span class="p">,</span>
+    <span class="s1">'https://api.authentimate.com/v1/verifications'</span><span class="p">,</span>
     <span class="p">{</span> 
-        <span class="na">form</span><span class="p">:</span> <span class="p">{</span> <span class="na">email</span><span class="p">:</span> <span class="s1">'test@example.com'</span> <span class="p">},</span>
+        <span class="na">form</span><span class="p">:</span> <span class="p">{</span> <span class="na">phoneNumber</span><span class="p">:</span> <span class="s1">'16072039850'</span> <span class="p">},</span>
         <span class="na">auth</span><span class="p">:</span> <span class="p">{</span> <span class="na">user</span><span class="p">:</span> <span class="s1">'YOUR_SECRET_KEY'</span> <span class="p">},</span>
         <span class="na">json</span><span class="p">:</span> <span class="kc">true</span> 
     <span class="p">},</span>
     <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">==</span> <span class="mi">201</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Save body.id to the user's profile in your database</span>
-            <span class="c1">// Optionally save body.expires to the user profile as well</span>
+            <span class="c1">// Save body.id to the user's profile in your database so you can find this user later to check the code they enter</span>
+            <span class="c1">// Optionally store body.expires as well if you'd like to reject expired verification codes without sending a request to Authentimate</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">);</span>
-</code></pre><pre class="highlight python"><code><span class="n">pip</span> <span class="n">install</span> <span class="n">requests</span>
-</code></pre><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">requests</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">'https://recover.authentimate.com/v1/resets'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span> <span class="s">'email'</span><span class="p">:</span><span class="s">'test@example.com'</span> <span class="p">},</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">'YOUR_SECRET_KEY'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>
-<span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-</code></pre><pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
-<span class="nb">require</span> <span class="s1">'uri'</span>
-
-<span class="n">url</span> <span class="o">=</span> <span class="no">URI</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="s1">'https://recover.authentimate.com/v1/resets'</span><span class="p">)</span>
-<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="nf">path</span><span class="p">)</span>
-<span class="n">req</span><span class="p">.</span><span class="nf">basic_auth</span> <span class="s1">'YOUR_SECRET_KEY'</span><span class="p">,</span> <span class="s1">''</span>
-<span class="n">req</span><span class="p">.</span><span class="nf">use_ssl</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="n">req</span><span class="p">.</span><span class="nf">form_data</span><span class="p">({</span><span class="s1">'email'</span> <span class="o">=&gt;</span> <span class="s1">'test@example.com'</span><span class="p">})</span>
-
-<span class="n">resp</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="nf">host</span><span class="p">,</span> <span class="n">url</span><span class="p">.</span><span class="nf">port</span><span class="p">).</span><span class="nf">start</span> <span class="p">{</span><span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
-<span class="nb">puts</span> <span class="n">resp</span>
 </code></pre>
 <blockquote>
 <p>The API response object looks like the following. 
-You should store the <code class="prettyprint">id</code> property with the user in your database. The result webhook will contain the same <code class="prettyprint">id</code> so that you can look up the user and update their password. 
-The <code class="prettyprint">expires</code> property is the Unix timestamp of the expiry date. We handle the actual rejecting of expired password resets, the expiry date is provided for your convenience in clearing out expired tokens from your database.</p>
+You should store the <code class="prettyprint">id</code> property with the user in your database. You&rsquo;ll need to send it along when you check the user&rsquo;s verification code
+The <code class="prettyprint">expires</code> property is the Unix timestamp of the expiry date. We handle the actual rejecting of expired verification requests, the expiry date is provided for your convenience in clearing out expired tokens from your database or for rejecting verification checks without needing to send a request to Authentimate.</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7b19ddcc6402fd0cd28ade60246ca60c"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ver_7b19ddcc6402fd0cd28ade60246ca60c"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"expires"</span><span class="p">:</span><span class="w"> </span><span class="mi">1487207640</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<blockquote>
-<p>In order to receive the user&rsquo;s updated password, you&rsquo;ll need to provide us with an endpoint on your server where we can send the password. The webhook request body looks like the following. As you can see, the <code class="prettyprint">id</code> property in the webhook matches the <code class="prettyprint">id</code> property you receive in the API response object. You can use this identifier to look up the user and update their password.</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7b19ddcc6402fd0cd28ade60246ca60c"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"password"</span><span class="p">:</span><span class="w"> </span><span class="s2">"h8A3fJ9d9L"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>To reset a user&rsquo;s password, you create a Reset object. This will send an email to the user with a link they can follow to enter a new password. After they&rsquo;ve done this, we&rsquo;ll send the new password to the webhook URL that you set in your <a href="https://app.authentimate.com/project">project settings</a>.</p>
+<p>To verify a user&rsquo;s phone number, you create a Verification object. This will send a verification code to the user&rsquo;s phone with a code they can enter on your website to prove that they own the phone number. After they&rsquo;ve done this, you&rsquo;ll need to send us a request with the code they entered as well as the <code class="prettyprint">id</code> from the API response to verify that the code is correct.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://recover.authentimate.com/v1/resets</code></p>
+<p><code class="prettyprint">POST https://api.authentimate.com/v1/verifications</code></p>
 
 <h3 id="parameters">Parameters</h3>
 
@@ -275,9 +237,64 @@ The <code class="prettyprint">expires</code> property is the Unix timestamp of t
 </tr>
 </thead><tbody>
 <tr>
-<td>email</td>
+<td>phoneNumber</td>
 <td><strong>string (required)<strong></td>
-<td>The email address that a password reset link will be sent to</td>
+<td>The phone number that the verification code will be sent to. NOTE: This phone number must include the country code, or we will not be able to deliver the message.</td>
+</tr>
+</tbody></table>
+
+<h2 id="check-verification-code">Check Verification Code</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.authentimate.com/v1/verifications/check?id=ver_7b19ddcc6402fd0cd28ade60246ca60c&amp;code=928571
+    -u YOUR_SECRET_KEY:
+</span></code></pre><pre class="highlight javascript"><code><span class="nx">npm</span> <span class="nx">install</span> <span class="nx">request</span>
+</code></pre><pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'request'</span><span class="p">);</span>
+
+<span class="nx">request</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span>
+    <span class="s1">'https://api.authentimate.com/v1/verifications/check?id=ver_7b19ddcc6402fd0cd28ade60246ca60c&amp;code=928571'</span><span class="p">,</span>
+    <span class="p">{</span> 
+        <span class="na">auth</span><span class="p">:</span> <span class="p">{</span> <span class="na">user</span><span class="p">:</span> <span class="s1">'YOUR_SECRET_KEY'</span> <span class="p">},</span>
+        <span class="na">json</span><span class="p">:</span> <span class="kc">true</span> 
+    <span class="p">},</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">==</span> <span class="mi">201</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Check body.verified for the status</span>
+            <span class="c1">// body.verified will be true if the code was correct, and false if the code was incorrect.</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+</code></pre>
+<blockquote>
+<p>The API response object looks like the following. 
+You should check the <code class="prettyprint">verified</code> property in the response body to determine whether the code the user entered was correct or not. A correct code will return <code class="prettyprint">verified: true</code>, while an incorrect code will return <code class="prettyprint">verified: false</code>.</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"verified"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>After you create a verification request for a user, you&rsquo;ll need to prompt them to enter the code that we sent to their phone. In order to verify that this code is correct, you send it to Authentimate&rsquo;s API along with the <code class="prettyprint">id</code> returned in the API response.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://api.authentimate.com/v1/verifications/check</code></p>
+
+<h3 id="parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td><strong>string (required)<strong></td>
+<td>The identifier returned in the <code class="prettyprint">id</code> property in the Create Verification Request endpoint</td>
+</tr>
+<tr>
+<td>code</td>
+<td><strong>string (required)<strong></td>
+<td>The code that your user entered after you generated a Verification request for their phone number.</td>
 </tr>
 </tbody></table>
 
@@ -286,8 +303,6 @@ The <code class="prettyprint">expires</code> property is the Unix timestamp of t
           <div class="lang-selector">
                 <a href="#" data-language-name="shell">Shell</a>
                 <a href="#" data-language-name="javascript">Node</a>
-                <a href="#" data-language-name="python">Python</a>
-                <a href="#" data-language-name="ruby">Ruby</a>
           </div>
       </div>
     </div>
